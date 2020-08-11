@@ -1,37 +1,19 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 
-class Counter extends Component {
-    state = {
-        number: 0
-    }
+export default function Counter() {
+    let [number, setNumber] = useState(0)
 
-    add = () => {
-        this.setState({
-            number: this.state.number + 1
-        })
-    }
-
-    minus = () => {
-        this.setState({
-            number: this.state.number - 1
-        })
-    }
-
-    render() {
         return (
             <div>
                 <h1>
                     Counter
                 </h1>
                 <h3 className="number">
-                    {this.state.number}
+                    {number}
                 </h3>
-                <button className="plus" onClick={this.add}>+</button>
-                <button className="minus" onClick={this.minus}>-</button>
-                <h4>👋 Goodbye!!</h4>
+                <button className="plus">+</button>
+                <button className="minus">-</button>
+                <h4>new change</h4>
             </div>
         )
-    }
 }
-
-export default Counter

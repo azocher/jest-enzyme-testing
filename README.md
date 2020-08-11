@@ -1,68 +1,148 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# **Optional Jest To Do List Lab**:
 
-## Available Scripts
+## Setup:
+Let's now create a To Do list app using test driven development. First let's create our files.
 
-In the project directory, you can run:
+We will have two components -- a ToDos.js component which will hold individual Todo.js components.
 
-### `npm start`
+```
+$ mkdir src/components/ToDos
+$ touch src/components/ToDos/ToDos.test.js
+```
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Now let's scaffold the configuration for our testing file.
 
-### `npm test`
+*ToDos.test.js*
+```
+import React from 'react'
+import { mount } from 'enzyme'
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+import ToDos from './ToDos'
+import ToDo from './ToDo'
 
-### `npm run build`
+describe('ToDos Component', () => {
+  const listItems = [
+    { task: 'create lesson', done: false },
+    { task: 'clean apartment', done: false }
+  ]
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  let component
+  // called before every test
+  beforeEach(() => {
+    // this time, mount instead of shallow because we will have subcomponents within our ToDos component
+    component = mount(<ToDos tasks={listItems} />)
+  })
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+  // add tests here
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+})
+```
 
-### `npm run eject`
+This looks pretty similar to our other testing blocks, but this time in beforeEach() we will use mount instead of shallow since we are going to have subcomponents within our parent component.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Let's add our first test:
+```
+  it('Should contain two todo subcomponents', () => {
+    expect(component.find(ToDo).length).toBe(2)
+  })
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Let's write the minimum amount of code to make this test pass:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+*ToDos.js*
+```
+import React, { Component } from 'react'
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+import ToDo from './ToDo'
 
-## Learn More
+class ToDos extends Component {
+  render () {
+    return (
+      <div>
+        {this.props.tasks.map((task, idx) => 
+          <ToDo task={task} key={idx} />
+        )}
+      </div>
+    )
+  }
+}
+ToDo.js
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+import React from 'react'
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+const ToDo = ({ task }) => {
+  return (
+    <div>
+      <div></div>
+    </div>
+  )
+}
+Now that we made that one pass, let's add another.
 
-### Code Splitting
+  it('Should render the todo list tasks', () => {
+    component.find(ToDo).forEach((todo, idx) => {
+      expect(todo.find('.task-name').text()).toBe(listItems[idx].task)
+    })
+  })
+The code to pass this one is pretty minimal! ToDo.js
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+import React from 'react'
 
-### Analyzing the Bundle Size
+const ToDo = ({ task }) => {
+  return (
+    <div>
++      <div className='task-name'>{task.task}</div>
+    </div>
+  )
+}
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+Now let's create functionality for making a new list item.
 
-### Making a Progressive Web App
+```
+  it(`Should have have a state attribute for the new todo that should update 
+      when the user types in an input`, () => {
+    expect(component.state('newTodo')).toBe('')
+    component.find('input').simulate('change', {target: {value: 'hello'}})
+    expect(component.state('newTodo')).toBe('hello')
+  })
+```
+Note that we can mock events by adding targets and values to the simulate method! We normally access e.target.value, so we create a similar structure when we mock the event!
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+*ToDos.js*
+```
+class ToDos extends Component {
+  constructor (props) {
+    super(props)
 
-### Advanced Configuration
+    this.state = {
++      newTodo: '',
+    }
+  }
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
++  handleChange = e => {
++    this.setState({
++      newTodo: e.target.value
++    })
++  }
 
-### Deployment
+  render () {
+    return (
+      <div>
++        <input onChange={this.handleChange}/>
+...
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+## You Do: Finish To Do App
+Write the following tests. After writing a test, implement the React code to pass that test.
 
-### `npm run build` fails to minify
+```
+Should create a new todo on the click of a button and update the UI with it
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Should mark todos as done on the click of a button
+
+Should have todos with the class checked if they are done and unchecked if they are not done
+```
+
+*Bonus*: look at the completed application using `npm start` or and then style the application accordingly.
