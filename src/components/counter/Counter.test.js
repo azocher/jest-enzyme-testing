@@ -25,8 +25,18 @@ describe('Counter component', () => {
     it('should display the current number in an element called className number', () => {
         expect(component.find('.number').text()).toEqual("0")
     })
+
+    // button that adds 1 on click to count
+    it('should have a button with a class plus that increases the number in state', () => {
+        component.find(".plus").simulate('click')
+        expect(component.state('number')).toEqual(1)
+    })
+
+    // button that subtract 1 on click to count
+    it('should have a button with a class minus that decreases the number in state', () => {
+        component.find('.minus').simulate('click')
+        expect(component.state('number')).toEqual(-1)
+    })
 })
 
 
-// button that adds 1 on click to count
-// button that subtract 1 on click to count
