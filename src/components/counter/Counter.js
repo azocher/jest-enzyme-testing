@@ -28,6 +28,7 @@ class Counter extends Component {
                 </h3>
                 <button className="plus" onClick={this.add}>+</button>
                 <button className="minus" onClick={this.minus}>-</button>
+                <h4>👋 Goodbye!!</h4>
             </div>
         )
     }
